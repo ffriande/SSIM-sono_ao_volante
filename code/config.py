@@ -57,26 +57,115 @@ clfs = [
     # XGBClassifier()
 ]
 
+
+LDAParameters1 = {
+    'solver' : ['svd', 'lsqr', 'eigen']
+}
+
+RandomForestParameters1 = {
+    'n_estimators':[10,100,1000,1500],
+    'max_features': ['sqrt' , 'log2'],
+    'max_depth':[20, 50, 70, 100],
+}
+
+SVCParameters1 = {
+    'C': [1000],
+    'gamma': [1],
+    'kernel': ['rbf'],
+    'class_weight':[None]
+}
+
+KNeighboursParameters1 = {
+    'n_neighbors':[3, 5, 11, 15, 19],
+    'weights':['uniform', 'distance'],
+    'metric':['euclidean', 'manhattan']
+}
+
+LightGBMParameters1 = {
+  'boosting_type': ['gbdt', 'dart', 'goss'],
+  'max_depth': [5],
+  'num_leaves': [14, 21, 28],
+  'min_child_samples': [100, 200, 500],
+  'objective': ['binary']
+}
+
+LightGBMParameters2 = {
+  'boosting_type': ['gbdt', 'dart', 'goss'],
+  'max_depth': [7],
+  'num_leaves': [30, 70, 110],
+  'min_child_samples': [100, 200, 500],
+  'objective': ['binary']
+}
+
+LightGBMParameters3 = {
+  'boosting_type': ['gbdt', 'dart', 'goss'],
+  'max_depth': [9],
+  'num_leaves': [50, 250, 450],
+  'min_child_samples': [100, 200, 500],
+  'objective': ['binary']
+}
+LightGBMParameters4 = {
+  'boosting_type': ['rf'],
+  'max_depth': [9, 7, 5],
+  'num_leaves': [50, 250, 450, 30, 70, 110],
+  'min_child_samples': [100, 200, 500],
+  'objective': ['binary'],
+  'bagging_fraction': np.linspace(0.1, 1, 100, endpoint=False).tolist(),
+  'bagging_freq': np.linspace(1, 100, 100, endpoint=False, dtype=int).tolist()
+}
+
+XGBoostParameters1 = {
+  'booster': ['gbtree'],
+  'learning_rate': stats.uniform(loc=0.3, scale=0.2),
+  'gamma': [0, 0.5, 1, 2.5, 5],
+  'max_depth': [4, 6, 8, 10],
+  'min_child_weight': [0.5, 1, 2],
+  'max_delta_step': [0, 1, 3, 6, 10],
+  'subsample': [0.5, 0.75, 1],
+  'sampling_method': ["uniform"],
+  'tree_method': ['auto', 'exact', 'approx', 'hist'] #gpu_hist]
+}
+
+XGBoostParameters2 = {
+  'booster': ['dart'],
+  'sample_type': ['uniform', 'weighted'],
+  'normalize_type': ['tree', 'forest'],
+  'rate_drop': stats.uniform(loc=0.3, scale=0.2)
+}
+
+XGBoostParameters3 = {
+    'booster': ['gblinear'],
+    'lambda': np.linspace(0, 10, 10, endpoint=True, dtype=int).tolist(),
+    'alpha': np.linspace(0, 10, 10, endpoint=True, dtype=int).tolist(),
+    'updater': ['coord_descent'],
+    'feature_selector': ['cyclic', 'shuffle', 'random', 'greedy', 'thrifty'],
+}
+
+XGBoostParameters4 = {
+    'booster': ['gblinear'],
+    'lambda': np.linspace(0, 10, 10, endpoint=True, dtype=int).tolist(),
+    'alpha': np.linspace(0, 10, 10, endpoint=True, dtype=int).tolist(),
+    'updater': ['shotgun'],
+    'feature_selector': ['cyclic', 'shuffle'],
+}
+
+decisionTreeParameters = {
+    'criterion': ["gini", "entropy"],
+    'splitter': ["best", "random"],
+    'max_depth': np.linspace(1, 10, 10, endpoint=True).tolist(),
+    'min_samples_split' : np.linspace(0.1, 1.0, 10, endpoint=True).tolist(),
+    'min_samples_leaf': np.linspace(0.1, 0.5, 5, endpoint=True).tolist(),
+    'max_features': ["auto", "sqrt", "log2", None],
+}
+
+
 params = [
-    #{
-    #    'solver' : ['svd', 'lsqr', 'eigen']
-    #},
-    {
-        'n_estimators':[10,100,1000,1500],
-        'max_features': ['sqrt' , 'log2'],
-        'max_depth':[20, 50, 70, 100],
-    },
-    #{
-    #    'C': [1000],
-    #    'gamma': [1],
-    #    'kernel': ['rbf'],
-    #    'class_weight':[None]
-    #},
-    #{
-    #    'n_neighbors':[3, 5, 11, 15, 19],
-    #    'weights':['uniform', 'distance'],
-    #    'metric':['euclidean', 'manhattan']
-    #}
+    LDAParameters1,
+    RandomForestParameters1,
+    SVCParameters1,
+    KNeighboursParameters1,
+    LightGBMParameters1, #LightGBMParameters2, LightGBMParameters3, LightGBMParameters4
+    XGBoostParameters1, #XGBoostParameters2, XGBoostParameters3, XGBoostParameters4
 ]
 
 best_params_list = [
