@@ -28,6 +28,7 @@ method_CV = Validation.FOLD10  # cross validation
 PLOT = False  # plot ecg; confusion matrix
 DEBUG = True  # information logs
 FT_SELECTION = False  # feature selection
+TRAIN_TEST_SIZE = 0.25
 
 # Features
 fts_name = ["nni_counter", "nni_mean", "nni_min", "nni_max", "nni_diff_mean", "nni_diff_min",
@@ -41,17 +42,61 @@ fts_name = ["nni_counter", "nni_mean", "nni_min", "nni_max", "nni_diff_mean", "n
 models = [
     # 'LDA',
     # 'RF',
-    # 'SVC',
+     'SVC',
     # 'KNN',
-     'LGBM',
+    # 'LGBM',
     # 'XGB',
 ]
 
 clfs = [
     # LinearDiscriminantAnalysis(),
-    # RandomForestClassifier(max_depth=20),
-    # SVC(class_weight='balanced'),
-    # KNeighborsClassifier(n_neighbors=15),
-     LGBMClassifier(),
+     RandomForestClassifier(),
+    # SVC(),
+    # KNeighborsClassifier(),
+    # LGBMClassifier(),
     # XGBClassifier()
+]
+
+params = [
+    #{
+    #    'solver' : ['svd', 'lsqr', 'eigen']
+    #},
+    {
+        'n_estimators':[10,100,1000,1500],
+        'max_features': ['sqrt' , 'log2'],
+        'max_depth':[20, 50, 70, 100],
+    },
+    #{
+    #    'C': [1000],
+    #    'gamma': [1],
+    #    'kernel': ['rbf'],
+    #    'class_weight':[None]
+    #},
+    #{
+    #    'n_neighbors':[3, 5, 11, 15, 19],
+    #    'weights':['uniform', 'distance'],
+    #    'metric':['euclidean', 'manhattan']
+    #}
+]
+
+best_params_list = [
+    #{
+    #    'solver' : ['svd', 'lsqr', 'eigen']
+    #},
+    {
+        'n_estimators':[10,100,1000,1500],
+        'max_features': ['sqrt' , 'log2'],
+        'max_depth':[20, 50, 70, 100],
+    },
+    #{
+    #    'C': 1000,
+    #    'gamma': 1,
+    #    'kernel': 'rbf',
+    #    'class_weight': None
+    #},
+    #{
+    #    'metric': 'manhattan',
+    #    'n_neighbors': 5,
+    #    'weights': 'distance',
+    #}
 ]

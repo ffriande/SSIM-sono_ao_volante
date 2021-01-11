@@ -26,18 +26,20 @@ from bokeh.plotting import figure, show, output_file
 import matplotlib.pyplot as plt
 
 # oversampling
-from imblearn.over_sampling import SVMSMOTE
+from imblearn.over_sampling import SVMSMOTE, SMOTE
+
+#Pipeline
+from imblearn.pipeline import Pipeline
 
 # scaling
 from sklearn import preprocessing
 
 # cross validation
-from sklearn.model_selection import StratifiedKFold, LeaveOneOut
+from sklearn.model_selection import StratifiedKFold, LeaveOneOut, GridSearchCV, train_test_split
 
 # evaluation metrics
 from sklearn.metrics import plot_confusion_matrix, classification_report, accuracy_score, confusion_matrix, \
-    precision_recall_fscore_support, cohen_kappa_score
-
+    precision_recall_fscore_support, cohen_kappa_score, make_scorer, f1_score
 # ecg output
 output_file("test.html")
 
@@ -195,8 +197,7 @@ def iterate_windows(ecg, windows, stages, reliability):
     # store results
     features = np.array([]).reshape(0, N_FTS)
     annotations = []
-
-    for idx, s in enumerate(ecg[windows]):
+    for idx, s in enumerate(ecg[windows], start=120):
 
         print(" ", idx + 1, "/", len(windows), end='\r')
 
@@ -476,7 +477,7 @@ def compute_folds(X, y):
         idx += 1
 
 
-def train_method(name, clf):
+def train_method(name, clf, best_params):
     """
     Trains method with folds
     :param name: classifier name
@@ -502,6 +503,8 @@ def train_method(name, clf):
         X_train = pd.read_pickle(FOLDS_FLD + 'X_train_' + str(idx) + '.pkl')
         X_test = pd.read_pickle(FOLDS_FLD + 'X_test_' + str(idx) + '.pkl')
 
+        # Set the best parameters, obtained with gridSearch
+        clf=clf.set_params(**best_params)
         # fit train
         clf = clf.fit(X_train, y_train)
 
@@ -553,8 +556,66 @@ def train_method(name, clf):
         print("-- Rem = {:.2f} ({:.2f})".format(recall[2], recall_std[2]))
         print("-- Wake = {:.2f} ({:.2f})".format(recall[3], recall_std[3]))
 
+def train_grid_method(model, clf, param_grid):
+    #load models from folder
+    y_train = np.load(FOLDS_FLD + 'y_train' + '.npy')
+    X_train = np.load(FOLDS_FLD + 'X_train' + '.npy')
+    y_test = np.load(FOLDS_FLD + 'y_test' + '.npy')
+    X_test = np.load(FOLDS_FLD + 'X_test' + '.npy')
 
-def run(train, folds):
+    # Create Pipeline to run the scaler, smote, and classifier
+    pipe = Pipeline([
+        ('scaler',  preprocessing.StandardScaler()),
+        ('sampling', SVMSMOTE()),
+        (model, clf)
+    ])
+    
+    param_grid={f'{model}__{k}' : v for k, v in param_grid.items()}
+    scoring = {'KAPPA': make_scorer(cohen_kappa_score), 'Accuracy': make_scorer(accuracy_score)}
+    # Create GridSearch instance with all the parameters
+    grd_clf = GridSearchCV(estimator=pipe, param_grid=param_grid, scoring=scoring, cv=StratifiedKFold (n_splits=10, shuffle=True), refit='Accuracy', n_jobs = -1)
+
+    # fit train
+    grd_clf = grd_clf.fit(X_train, y_train)
+    print(grd_clf.best_params_) # print best params
+
+    # predict
+    y_pred = grd_clf.predict(X_test)
+    # results
+    rep = classification_report(y_test, y_pred)
+    if DEBUG:
+        print("\n", rep)
+    # store
+    sc = accuracy_score(y_test, y_pred)  # accuracy
+    kappa = cohen_kappa_score(y_test, y_pred)  # kappa
+    conf_matrix= confusion_matrix(y_test, y_pred, normalize='true')  # matrix
+    score = precision_recall_fscore_support(y_test, y_pred)  # metrics for each label
+
+    print("\nResults...")
+    print("- Accuracy = {:.2f}".format(sc))
+    print("- Kappa = {:.2f}".format(kappa))
+
+    print("- Confusion matrix (mean; std)")
+    print(np.round(conf_matrix, 2))
+
+    # Sleep stages
+    precision, recall, f_score, _ = score
+
+    print("- Stages recall")
+    if NR_STAGES == 3:
+        print("-- NREM = {:.2f}".format(recall[0]))
+        print("-- REM = {:.2f}".format(recall[1]))
+        print("-- Wake = {:.2f}".format(recall[2]))
+    else:
+        print("-- Deep = {:.2f}".format(recall[0]))
+        print("-- Light = {:.2f}".format(recall[1]))
+        print("-- Rem = {:.2f}".format(recall[2]))
+        print("-- Wake = {:.2f}".format(recall[3]))
+    
+    
+
+
+def run(train, folds, grid):
     """
     Train methods
     :param train: compute features
@@ -563,7 +624,7 @@ def run(train, folds):
 
     rng = range(1, N_FILES + 1)  # file range
 
-    if train or folds:
+    if train or folds or grid:
 
         # compute ecg features
         if train:
@@ -577,17 +638,33 @@ def run(train, folds):
             (X, y) = load_array(rng)
 
         # get folds
-        compute_folds(X, y)
-
+        if folds:
+            compute_folds(X, y)
+        
+        if grid:
+            # Divide for train and test
+            X_train, X_test, y_train, y_test = train_test_split(X, y,
+                                                    stratify=y, 
+                                                    test_size=TRAIN_TEST_SIZE)
+            
+            #Save train and test for future use
+            np.save(FOLDS_FLD + 'y_train' , y_train)
+            np.save(FOLDS_FLD + 'X_train' , X_train)
+            np.save(FOLDS_FLD + 'y_test' , y_test)
+            np.save(FOLDS_FLD + 'X_test' , X_test)
     # train algorithms
-    for name, clf in zip(models, clfs):
-        train_method(name, clf)
+    for name, clf, param_grid, best_params in zip(models, clfs, params, best_params_list):
+        if grid:
+            train_grid_method(name, clf, param_grid)
+        else:
+            train_method(name, clf, best_params)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Sono ao Volante.")
     parser.add_argument('--train', help="Compute ECG features", action='store_true')
     parser.add_argument('--folds', help="Compute folds", action='store_true')
+    parser.add_argument('--grid', help="Compute GridSearch", action='store_true')
     args = parser.parse_args()
 
-    run(args.train, args.folds)
+    run(args.train, args.folds, args.grid)
