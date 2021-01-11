@@ -4,7 +4,9 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
 from lightgbm import LGBMClassifier
 from xgboost import XGBClassifier
-
+import numpy as np
+import scipy.stats as stats
+ 
 # Type of Cross Validation
 class Validation:
     FOLD10 = 1
@@ -42,18 +44,18 @@ fts_name = ["nni_counter", "nni_mean", "nni_min", "nni_max", "nni_diff_mean", "n
 models = [
     # 'LDA',
     # 'RF',
-     'SVC',
+    # 'SVC',
     # 'KNN',
-    # 'LGBM',
+     'LGBM',
     # 'XGB',
 ]
 
 clfs = [
     # LinearDiscriminantAnalysis(),
-     RandomForestClassifier(),
+    # RandomForestClassifier(),
     # SVC(),
     # KNeighborsClassifier(),
-    # LGBMClassifier(),
+     LGBMClassifier(),
     # XGBClassifier()
 ]
 
@@ -160,23 +162,23 @@ decisionTreeParameters = {
 
 
 params = [
-    LDAParameters1,
-    RandomForestParameters1,
-    SVCParameters1,
-    KNeighboursParameters1,
-    LightGBMParameters1, #LightGBMParameters2, LightGBMParameters3, LightGBMParameters4
-    XGBoostParameters1, #XGBoostParameters2, XGBoostParameters3, XGBoostParameters4
+    # LDAParameters1,
+    # RandomForestParameters1,
+    # SVCParameters1,
+    # KNeighboursParameters1,
+    LightGBMParameters4
+    # XGBoostParameters1, #XGBoostParameters2, XGBoostParameters3, XGBoostParameters4
 ]
 
 best_params_list = [
     #{
     #    'solver' : ['svd', 'lsqr', 'eigen']
     #},
-    {
-        'n_estimators':[10,100,1000,1500],
-        'max_features': ['sqrt' , 'log2'],
-        'max_depth':[20, 50, 70, 100],
-    },
+    #{
+    #    'n_estimators':[10,100,1000,1500],
+    #    'max_features': ['sqrt' , 'log2'],
+    #    'max_depth':[20, 50, 70, 100],
+    #},
     #{
     #    'C': 1000,
     #    'gamma': 1,
@@ -187,5 +189,8 @@ best_params_list = [
     #    'metric': 'manhattan',
     #    'n_neighbors': 5,
     #    'weights': 'distance',
-    #}
+    #},
+    {
+        'boosting_type': 'gbdt', 'max_depth': 9, 'min_child_samples': 100, 'num_leaves': 250, 'objective': 'binary'
+    }
 ]

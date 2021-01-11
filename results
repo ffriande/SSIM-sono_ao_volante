@@ -44,3 +44,71 @@ Point: When running with a different dataset, it is better to try all the steps 
 'n_neighbors':[3, 5, 11, 15, 19],
 'weights':['uniform', 'distance'],
 'metric':['euclidean', 'manhattan']
+
+
+LIGHTGBM 
+DEFAULT
+- Accuracy = 0.89 (0.01)
+- Kappa = 0.70 (0.03)
+- Confusion matrix (mean; std)
+[[0.9  0.03 0.07]
+ [0.16 0.78 0.06]
+ [0.12 0.01 0.87]]
+[[0.01 0.01 0.01]
+ [0.06 0.07 0.04]
+ [0.03 0.01 0.02]]
+- Stages recall
+-- NREM = 0.90 (0.01)
+-- REM = 0.78 (0.07)
+-- Wake = 0.87 (0.02)
+
+First Combination
+
+'LGBM__boosting_type': 'gbdt', 'LGBM__max_depth': 5, 'LGBM__min_child_samples': 100, 'LGBM__num_leaves': 21, 'LGBM__objective': 'binary'
+- Accuracy = 0.85 (0.01)
+- Kappa = 0.63 (0.02)
+- Confusion matrix (mean; std)
+[[0.85 0.05 0.1 ]
+ [0.15 0.76 0.09]
+ [0.12 0.02 0.86]]
+[[0.01 0.01 0.01]
+ [0.05 0.06 0.04]
+ [0.04 0.01 0.04]]
+- Stages recall
+-- NREM = 0.85 (0.01)
+-- REM = 0.76 (0.06)
+-- Wake = 0.86 (0.04)
+
+Second Combination
+
+'LGBM__boosting_type': 'gbdt', 'LGBM__max_depth': 7, 'LGBM__min_child_samples': 100, 'LGBM__num_leaves': 30, 'LGBM__objective': 'binary'
+- Accuracy = 0.88 (0.01)
+- Kappa = 0.68 (0.03)
+- Confusion matrix (mean; std)
+[[0.88 0.04 0.08]
+ [0.15 0.78 0.07]
+ [0.11 0.02 0.87]]
+[[0.01 0.01 0.01]
+ [0.03 0.06 0.06]
+ [0.02 0.01 0.02]]
+- Stages recall
+-- NREM = 0.88 (0.01)
+-- REM = 0.78 (0.06)
+-- Wake = 0.87 (0.02)
+
+Third Combination
+
+'LGBM__boosting_type': 'gbdt', 'LGBM__max_depth': 9, 'LGBM__min_child_samples': 100, 'LGBM__num_leaves': 250, 'LGBM__objective': 'binary'
+- Accuracy = 0.89 (0.01)
+- Kappa = 0.70 (0.03)
+- Confusion matrix (mean; std)
+[[0.9  0.03 0.07]
+ [0.17 0.77 0.06]
+ [0.12 0.01 0.87]]
+[[0.01 0.01 0.01]
+ [0.05 0.06 0.04]
+ [0.02 0.01 0.02]]
+- Stages recall
+-- NREM = 0.90 (0.01)
+-- REM = 0.77 (0.06)
+-- Wake = 0.87 (0.02)
