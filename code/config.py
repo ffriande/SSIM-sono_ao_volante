@@ -46,8 +46,8 @@ models = [
     # 'RF',
     # 'SVC',
     # 'KNN',
-     'LGBM',
-    # 'XGB',
+    # 'LGBM',
+     'XGB',
 ]
 
 clfs = [
@@ -55,8 +55,8 @@ clfs = [
     # RandomForestClassifier(),
     # SVC(),
     # KNeighborsClassifier(),
-     LGBMClassifier(),
-    # XGBClassifier()
+    # LGBMClassifier(),
+     XGBClassifier()
 ]
 
 
@@ -109,30 +109,26 @@ LightGBMParameters3 = {
 LightGBMParameters4 = {
   'boosting_type': ['rf'],
   'max_depth': [9, 7, 5],
-  'num_leaves': [50, 250, 450, 30, 70, 110],
-  'min_child_samples': [100, 200, 500],
+  'num_leaves': [50, 30, 70, 110],
+  'min_child_samples': [100, 200, 300],
   'objective': ['binary'],
-  'bagging_fraction': np.linspace(0.1, 1, 100, endpoint=False).tolist(),
-  'bagging_freq': np.linspace(1, 100, 100, endpoint=False, dtype=int).tolist()
+  'bagging_fraction': np.linspace(0.1, 1, 5, endpoint=False).tolist(),
+  'bagging_freq': np.linspace(1, 100, 5, endpoint=False, dtype=int).tolist()
 }
 
 XGBoostParameters1 = {
-  'booster': ['gbtree'],
-  'learning_rate': stats.uniform(loc=0.3, scale=0.2),
-  'gamma': [0, 0.5, 1, 2.5, 5],
-  'max_depth': [4, 6, 8, 10],
-  'min_child_weight': [0.5, 1, 2],
-  'max_delta_step': [0, 1, 3, 6, 10],
-  'subsample': [0.5, 0.75, 1],
-  'sampling_method': ["uniform"],
-  'tree_method': ['auto', 'exact', 'approx', 'hist'] #gpu_hist]
+  'min_child_weight': [1, 5, 10],
+    'gamma': [0.5, 1, 1.5, 2, 5],
+    'subsample': [0.6, 0.8, 1.0],
+    'colsample_bytree': [0.6, 0.8, 1.0],
+    'max_depth': [3, 4, 5]
 }
 
 XGBoostParameters2 = {
   'booster': ['dart'],
   'sample_type': ['uniform', 'weighted'],
   'normalize_type': ['tree', 'forest'],
-  'rate_drop': stats.uniform(loc=0.3, scale=0.2)
+  'rate_drop': [0.3,0.6,0.9]
 }
 
 XGBoostParameters3 = {
@@ -166,8 +162,8 @@ params = [
     # RandomForestParameters1,
     # SVCParameters1,
     # KNeighboursParameters1,
-    LightGBMParameters4
-    # XGBoostParameters1, #XGBoostParameters2, XGBoostParameters3, XGBoostParameters4
+    # LightGBMParameters4
+     XGBoostParameters1, #XGBoostParameters2, XGBoostParameters3, XGBoostParameters4
 ]
 
 best_params_list = [
@@ -190,7 +186,10 @@ best_params_list = [
     #    'n_neighbors': 5,
     #    'weights': 'distance',
     #},
+    #{
+    #    'bagging_fraction': 0.82, 'bagging_freq': 1, 'boosting_type': 'rf', 'max_depth': 9, 'min_child_samples': 100, 'num_leaves': 110, 'objective': 'binary'
+    #},
     {
-        'boosting_type': 'gbdt', 'max_depth': 9, 'min_child_samples': 100, 'num_leaves': 250, 'objective': 'binary'
+        'colsample_bytree': 1.0, 'gamma': 0.5, 'max_depth': 5, 'min_child_weight': 1, 'subsample': 0.8
     }
 ]
