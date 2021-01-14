@@ -46,8 +46,8 @@ models = [
     # 'RF',
     # 'SVC',
     # 'KNN',
-     'LGBM',
-    # 'XGB',
+    # 'LGBM',
+     'XGB',
 ]
 
 clfs = [
@@ -55,8 +55,8 @@ clfs = [
     # RandomForestClassifier(),
     # SVC(),
     # KNeighborsClassifier(),
-     LGBMClassifier(),
-    # XGBClassifier()
+    # LGBMClassifier(),
+     XGBClassifier()
 ]
 
 
@@ -137,16 +137,16 @@ XGBoostParameters2 = {
 
 XGBoostParameters3 = {
     'booster': ['gblinear'],
-    'lambda': np.linspace(0, 10, 10, endpoint=True, dtype=int).tolist(),
-    'alpha': np.linspace(0, 10, 10, endpoint=True, dtype=int).tolist(),
+    'lambda': np.linspace(4, 10, 3, endpoint=True, dtype=int).tolist(),
+    'alpha': np.linspace(4, 10, 3, endpoint=True, dtype=int).tolist(),
     'updater': ['coord_descent'],
     'feature_selector': ['cyclic', 'shuffle', 'random', 'greedy', 'thrifty'],
 }
 
 XGBoostParameters4 = {
     'booster': ['gblinear'],
-    'lambda': np.linspace(0, 10, 10, endpoint=True, dtype=int).tolist(),
-    'alpha': np.linspace(0, 10, 10, endpoint=True, dtype=int).tolist(),
+    'lambda': np.linspace(0, 10, 5, endpoint=True, dtype=int).tolist(),
+    'alpha': np.linspace(0, 10, 5, endpoint=True, dtype=int).tolist(),
     'updater': ['shotgun'],
     'feature_selector': ['cyclic', 'shuffle'],
 }
@@ -166,8 +166,8 @@ params = [
     # RandomForestParameters1,
     # SVCParameters1,
     # KNeighboursParameters1,
-    LightGBMParameters4
-    # XGBoostParameters1, #XGBoostParameters2, XGBoostParameters3, XGBoostParameters4
+    # LightGBMParameters4
+     XGBoostParameters4, #XGBoostParameters2, XGBoostParameters3, XGBoostParameters4
 ]
 
 best_params_list = [
@@ -190,7 +190,9 @@ best_params_list = [
     #    'n_neighbors': 5,
     #    'weights': 'distance',
     #},
-    {
-        'boosting_type': 'gbdt', 'max_depth': 9, 'min_child_samples': 100, 'num_leaves': 250, 'objective': 'binary'
-    }
+#    {
+ #       'boosting_type': 'gbdt', 'max_depth': 9, 'min_child_samples': 100, 'num_leaves': 250, 'objective': 'binary'
+  #  },
+  #  {'XGB__alpha': 4, 'XGB__booster': 'gblinear', 'XGB__feature_selector': 'cyclic', 'XGB__lambda': 4, 'XGB__updater': 'coord_descent'}
+  {'XGB__alpha': 2, 'XGB__booster': 'gblinear', 'XGB__feature_selector': 'cyclic', 'XGB__lambda': 0, 'XGB__updater': 'shotgun'}
 ]
