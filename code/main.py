@@ -573,7 +573,7 @@ def train_grid_method(model, clf, param_grid):
     param_grid={f'{model}__{k}' : v for k, v in param_grid.items()}
     scoring = {'KAPPA': make_scorer(cohen_kappa_score), 'Accuracy': make_scorer(accuracy_score)}
     # Create GridSearch instance with all the parameters
-    grd_clf = GridSearchCV(estimator=pipe, param_grid=param_grid, scoring=scoring, cv=StratifiedKFold (n_splits=10, shuffle=True), refit='Accuracy', n_jobs = -1)
+    grd_clf = GridSearchCV(estimator=pipe, param_grid=param_grid, scoring=scoring, cv=StratifiedKFold (n_splits=10, shuffle=True), refit='Accuracy', n_jobs = 2)
 
     # fit train
     grd_clf = grd_clf.fit(X_train, y_train)
