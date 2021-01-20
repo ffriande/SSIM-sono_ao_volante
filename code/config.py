@@ -25,7 +25,7 @@ N_FTS = 41  # nr of features
 N_FILES = 8  # nr of files
 N_DIV = 9  # nr of 30s divisions in window. #3 5 7 9
 sr = 256  # sampling rate (Hz)
-NR_STAGES = 4  # sleep stages # 4 3
+NR_STAGES = 3  # sleep stages # 4 3
 method_CV = Validation.FOLD10  # cross validation
 PLOT = False  # plot ecg; confusion matrix
 DEBUG = True  # information logs
@@ -42,21 +42,23 @@ fts_name = ["nni_counter", "nni_mean", "nni_min", "nni_max", "nni_diff_mean", "n
 
 # Classifiers
 models = [
-    #'LDA',
+    'LDA',
     'RF',
     'KNN',
     'SVC',
     'LGBM',
     'XGB',
+    'LSTM'
 ]
 
 clfs = [
-    #LinearDiscriminantAnalysis(),
+    LinearDiscriminantAnalysis(),
     RandomForestClassifier(),
     KNeighborsClassifier(),
     SVC(),
     LGBMClassifier(),
-    XGBClassifier()
+    XGBClassifier(),
+    None
 ]
 
 
@@ -179,9 +181,9 @@ params = [
 ]
 
 best_params_list = [
-  #{
-  #  'solver' : 'svd'
-  #},
+  {
+    'solver' : 'svd'
+  },
   {
    'max_depth': 100,
    'max_features': 'sqrt',
@@ -215,5 +217,6 @@ best_params_list = [
     'sampling_method': 'uniform', 
     'subsample': 1, 
     'tree_method': 'auto'
-  }
+  }, 
+  {}
 ]

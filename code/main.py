@@ -1,4 +1,6 @@
+from neuralnetwork import *
 from config import *
+from sklearn.preprocessing import OneHotEncoder
 
 # utils
 from collections import Counter
@@ -499,6 +501,33 @@ def compute_fs_grid(X,y):
     X_train.to_pickle(FOLDS_FLD + 'X_train.pkl')
     X_test.to_pickle(FOLDS_FLD + 'X_test.pkl')
 
+def train_neural_network():
+    #load models from folder
+    y_train = np.load(FOLDS_FLD + 'y_train' + '.npy')
+    X_train = np.load(FOLDS_FLD + 'X_train' + '.npy')
+    y_test = np.load(FOLDS_FLD + 'y_test' + '.npy')
+    X_test = np.load(FOLDS_FLD + 'X_test' + '.npy')
+
+    y_train, _ = pd.factorize(y_train)
+    y_test, _ = pd.factorize(y_test)
+
+    # binary encode
+    onehot_encoder = OneHotEncoder(sparse=False)
+    integer_encoded = y_train.reshape(len(y_train), 1)
+    y_train = onehot_encoder.fit_transform(integer_encoded)
+    # binary encode
+    onehot_encoder = OneHotEncoder(sparse=False)
+    integer_encoded = y_test.reshape(len(y_test), 1)
+    y_test = onehot_encoder.fit_transform(integer_encoded)
+
+    print("xtrain", X_train.shape)
+    print("xtest", X_test.shape)
+    print("ytrain", y_train.shape)
+    print("ytest", y_test.shape)
+
+    nn = init_model(5000000, NR_STAGES)
+    fit_model(X_train, y_train, nn, X_test, y_test)
+
 def train_method(name, clf, best_params):
     """
     Trains method with folds
@@ -507,6 +536,10 @@ def train_method(name, clf, best_params):
     """
 
     print("\nTraining algorithm "+name+"...")
+
+    if name == 'LSTM':
+        train_neural_network()
+        return
 
     conf_matrix_array = []
     score_array = []
