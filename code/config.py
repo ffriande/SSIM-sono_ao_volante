@@ -25,7 +25,7 @@ N_FTS = 41  # nr of features
 N_FILES = 8  # nr of files
 N_DIV = 9  # nr of 30s divisions in window. #3 5 7 9
 sr = 256  # sampling rate (Hz)
-NR_STAGES = 3  # sleep stages # 4 3
+NR_STAGES = 4  # sleep stages # 4 3
 method_CV = Validation.FOLD10  # cross validation
 PLOT = False  # plot ecg; confusion matrix
 DEBUG = True  # information logs
@@ -42,21 +42,21 @@ fts_name = ["nni_counter", "nni_mean", "nni_min", "nni_max", "nni_diff_mean", "n
 
 # Classifiers
 models = [
-    # 'LDA',
-    # 'RF',
-    # 'SVC',
-    # 'KNN',
-    # 'LGBM',
-     'XGB',
+    #'LDA',
+    'RF',
+    'KNN',
+    'SVC',
+    'LGBM',
+    'XGB',
 ]
 
 clfs = [
-    # LinearDiscriminantAnalysis(),
-    # RandomForestClassifier(),
-    # SVC(),
-    # KNeighborsClassifier(),
-    # LGBMClassifier(),
-     XGBClassifier()
+    #LinearDiscriminantAnalysis(),
+    RandomForestClassifier(),
+    KNeighborsClassifier(),
+    SVC(),
+    LGBMClassifier(),
+    XGBClassifier()
 ]
 
 
@@ -71,10 +71,10 @@ RandomForestParameters1 = {
 }
 
 SVCParameters1 = {
-    'C': [1000],
-    'gamma': [1],
-    'kernel': ['rbf'],
-    'class_weight':[None]
+  'kernel': ['linear', 'rbf'],
+  'C': [1, 10, 100],
+  'gamma': ['scale','auto'],
+  'class_weight':[None,'balanced']
 }
 
 KNeighboursParameters1 = {
@@ -118,21 +118,21 @@ LightGBMParameters4 = {
 
 XGBoostParameters1 = {
    'booster': ['gbtree'],
-   'learning_rate': stats.uniform(loc=0.3, scale=0.2),
-   'gamma': [0, 0.5, 1, 2.5, 5],
-   'max_depth': [4, 6, 8, 10],
-   'min_child_weight': [0.5, 1, 2],
-   'max_delta_step': [0, 1, 3, 6, 10],
-   'subsample': [0.5, 0.75, 1],
+   'learning_rate': [0.3],
+   'gamma': [0],
+   'max_depth': [10,15],
+   'min_child_weight': [0.5, 1],
+   'max_delta_step': [0, 1],
+   'subsample': [0.7, 1],
    'sampling_method': ["uniform"],
-   'tree_method': ['auto', 'exact', 'approx', 'hist'] #gpu_hist]
+   'tree_method': ['auto']
 }
 
 XGBoostParameters2 = {
   'booster': ['dart'],
   'sample_type': ['uniform', 'weighted'],
   'normalize_type': ['tree', 'forest'],
-  'rate_drop': [0.3,0.6,0.9]
+  'rate_drop': [0.3]
 }
 
 XGBoostParameters3 = {
@@ -171,37 +171,49 @@ decisionTreeParameters = {
 
 params = [
     # LDAParameters1,
-    # RandomForestParameters1,
-    # SVCParameters1,
+    RandomForestParameters1,
     # KNeighboursParameters1,
+    # SVCParameters1,
     # LightGBMParameters4
-     XGBoostParameters4, #XGBoostParameters2, XGBoostParameters3, XGBoostParameters4
+    # XGBoostParameters1, #XGBoostParameters2, XGBoostParameters3, XGBoostParameters4
 ]
 
 best_params_list = [
-    #{
-    #    'solver' : ['svd', 'lsqr', 'eigen']
-    #},
-    #{
-    #    'n_estimators':[10,100,1000,1500],
-    #    'max_features': ['sqrt' , 'log2'],
-    #    'max_depth':[20, 50, 70, 100],
-    #},
-    #{
-    #    'C': 1000,
-    #    'gamma': 1,
-    #    'kernel': 'rbf',
-    #    'class_weight': None
-    #},
-    #{
-    #    'metric': 'manhattan',
-    #    'n_neighbors': 5,
-    #    'weights': 'distance',
-    #},
-    #{
-    #    'bagging_fraction': 0.82, 'bagging_freq': 1, 'boosting_type': 'rf', 'max_depth': 9, 'min_child_samples': 100, 'num_leaves': 110, 'objective': 'binary'
-    #},
-    {
-        'colsample_bytree': 1.0, 'gamma': 0.5, 'max_depth': 5, 'min_child_weight': 1, 'subsample': 0.8
-    }
+  #{
+  #  'solver' : 'svd'
+  #},
+  {
+   'max_depth': 100,
+   'max_features': 'sqrt',
+   'n_estimators': 1000
+  },
+  {
+    'metric': 'manhattan',
+    'n_neighbors': 3,
+    'weights': 'distance'
+  },
+  {
+    'C': 100,
+    'gamma': 1,
+    'kernel': 'rbf',
+    'class_weight': None
+  },
+  {
+    'boosting_type': 'gbdt', 
+    'max_depth': 9, 
+    'min_child_samples': 100, 
+    'num_leaves': 250, 
+    'objective': 'binary'
+  },
+  {
+    'booster': 'gbtree', 
+    'gamma': 0, 
+    'learning_rate': 0.3, 
+    'max_delta_step': 0, 
+    'max_depth': 10, 
+    'min_child_weight': 0.5, 
+    'sampling_method': 'uniform', 
+    'subsample': 1, 
+    'tree_method': 'auto'
+  }
 ]

@@ -112,7 +112,15 @@ Results...
 
 FIRST COMBINATION
 
-'XGB__booster': 'gbtree', 'XGB__gamma': 0, 'XGB__learning_rate': 0.3, 'XGB__max_delta_step': 0, 'XGB__max_depth': 10, 'XGB__min_child_weight': 0.5, 'XGB__sampling_method': 'uniform', 'XGB__subsample': 1, 'XGB__tree_method': 'auto'
+'XGB__booster': 'gbtree', 
+'XGB__gamma': 0, 
+'XGB__learning_rate': 0.3, 
+'XGB__max_delta_step': 0, 
+'XGB__max_depth': 10, 
+'XGB__min_child_weight': 0.5, 
+'XGB__sampling_method': 'uniform', 
+'XGB__subsample': 1, 
+'XGB__tree_method': 'auto'
                precision    recall  f1-score   support
 
         NREM       0.96      0.94      0.95       599

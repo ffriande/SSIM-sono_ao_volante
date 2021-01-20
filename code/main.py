@@ -476,6 +476,28 @@ def compute_folds(X, y):
 
         idx += 1
 
+def compute_fs_grid(X,y):
+    # Divide for train and test
+    X_train, X_test, y_train, y_test = train_test_split(X, y,
+                                            stratify=y, 
+                                            test_size=TRAIN_TEST_SIZE)
+                                            
+    X_test = pd.DataFrame(data=X_test, columns=fts_name)
+    X_train = pd.DataFrame(data=X_train, columns=fts_name)
+    # feature selection
+    if FT_SELECTION:
+        ft_selection(X_train, X_test)
+    else:
+        # select only 7 features
+        col_selected = {"nni_counter", "nni_mean", "nni_min", "nni_max", "nni_diff_mean", "nni_diff_max", "sdnn"}
+        X_test = X_test[col_selected]
+        X_train = X_train[col_selected]
+    
+    #Save train and test for future use
+    np.save(FOLDS_FLD + 'y_train' , y_train)
+    np.save(FOLDS_FLD + 'y_test' , y_test)
+    X_train.to_pickle(FOLDS_FLD + 'X_train.pkl')
+    X_test.to_pickle(FOLDS_FLD + 'X_test.pkl')
 
 def train_method(name, clf, best_params):
     """
@@ -558,10 +580,10 @@ def train_method(name, clf, best_params):
 
 def train_grid_method(model, clf, param_grid):
     #load models from folder
-    y_train = np.load(FOLDS_FLD + 'y_train' + '.npy')
-    X_train = np.load(FOLDS_FLD + 'X_train' + '.npy')
-    y_test = np.load(FOLDS_FLD + 'y_test' + '.npy')
-    X_test = np.load(FOLDS_FLD + 'X_test' + '.npy')
+    y_train = np.load(FOLDS_FLD + 'y_train.npy')
+    y_test = np.load(FOLDS_FLD + 'y_test.npy')
+    X_train = pd.read_pickle(FOLDS_FLD + 'X_train.pkl')
+    X_test = pd.read_pickle(FOLDS_FLD + 'X_test.pkl')
 
     # Create Pipeline to run the scaler, smote, and classifier
     pipe = Pipeline([
@@ -573,8 +595,9 @@ def train_grid_method(model, clf, param_grid):
     param_grid={f'{model}__{k}' : v for k, v in param_grid.items()}
     scoring = {'KAPPA': make_scorer(cohen_kappa_score), 'Accuracy': make_scorer(accuracy_score)}
     # Create GridSearch instance with all the parameters
-    grd_clf = GridSearchCV(estimator=pipe, param_grid=param_grid, scoring=scoring, cv=StratifiedKFold (n_splits=10, shuffle=True), refit='Accuracy', n_jobs = 2)
+    grd_clf = GridSearchCV(estimator=pipe, param_grid=param_grid, scoring=scoring, cv=StratifiedKFold (n_splits=10, shuffle=True), refit='Accuracy', n_jobs = -1)
 
+    print("Training model " + model + " with GridSearchCV for Hyperparameter tunning")
     # fit train
     grd_clf = grd_clf.fit(X_train, y_train)
     print(grd_clf.best_params_) # print best params
@@ -642,21 +665,12 @@ def run(train, folds, grid):
             compute_folds(X, y)
         
         if grid:
-            # Divide for train and test
-            X_train, X_test, y_train, y_test = train_test_split(X, y,
-                                                    stratify=y, 
-                                                    test_size=TRAIN_TEST_SIZE)
-            
-            #Save train and test for future use
-            np.save(FOLDS_FLD + 'y_train' , y_train)
-            np.save(FOLDS_FLD + 'X_train' , X_train)
-            np.save(FOLDS_FLD + 'y_test' , y_test)
-            np.save(FOLDS_FLD + 'X_test' , X_test)
-    # train algorithms
-    for name, clf, param_grid, best_params in zip(models, clfs, params, best_params_list):
-        if grid:
+            compute_fs_grid(X,y)
+    if grid:
+        for name, clf, param_grid in zip(models, clfs, params):
             train_grid_method(name, clf, param_grid)
-        else:
+    else:
+        for name, clf, best_params in zip(models, clfs, best_params_list):
             train_method(name, clf, best_params)
 
 
