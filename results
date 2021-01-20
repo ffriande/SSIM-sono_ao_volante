@@ -1,51 +1,3 @@
-SVM
-1st try
-
-'kernel': ['rbf','poly','sigmoid],
-'class_weight':['balanced']
-
-results all with rbf = to the ones already obtained (0.79)
-
-2nd try
-'C': [1,10,100,1000],
-'kernel': ['rbf'],
-'class_weight':['balanced']
-
-results all with C=1000 and results 0.1 better than the obtained by diss (0.80)
-
-3rd try
-'C': [1000],
-'gamma': [1, 0.1, 0.01, 0.001,'scale','auto'],
-'kernel': ['rbf'],
-'class_weight':[None,'balanced']
-
-results all with gamma=1 and class_weight=None, making results 0.7 better than the obtained by diss (0.86) accuracy
-Final results 
-Results...
-- Accuracy = 0.86 (0.02)
-- Kappa = 0.64 (0.03)
-- Confusion matrix (mean; std)
-[[0.88 0.05 0.08]
- [0.16 0.79 0.05]
- [0.17 0.02 0.8 ]]
-[[0.02 0.01 0.01]
- [0.07 0.06 0.04]
- [0.03 0.02 0.03]]
-- Stages recall
--- NREM = 0.88 (0.02)
--- REM = 0.79 (0.06)
--- Wake = 0.80 (0.03)
-
-
-So final parameters are C=1000, gamma=1, kernel='rbf', class_weight='None'
-Point: When running with a different dataset, it is better to try all the steps above.
-
-
-'n_neighbors':[3, 5, 11, 15, 19],
-'weights':['uniform', 'distance'],
-'metric':['euclidean', 'manhattan']
-
-
 LIGHTGBM 
 DEFAULT
 - Accuracy = 0.89 (0.01)
@@ -158,60 +110,120 @@ Results...
 -- REM = 0.74 (0.06)
 -- Wake = 0.84 (0.03)
 
+FIRST COMBINATION
+
+'XGB__booster': 'gbtree', 'XGB__gamma': 0, 'XGB__learning_rate': 0.3, 'XGB__max_delta_step': 0, 'XGB__max_depth': 10, 'XGB__min_child_weight': 0.5, 'XGB__sampling_method': 'uniform', 'XGB__subsample': 1, 'XGB__tree_method': 'auto'
+               precision    recall  f1-score   support
+
+        NREM       0.96      0.94      0.95       599
+         Rem       0.68      0.76      0.72        37
+        Wake       0.78      0.84      0.81       114
+
+    accuracy                           0.92       750
+   macro avg       0.81      0.85      0.83       750
+weighted avg       0.92      0.92      0.92       750
+
+
+Results...
+- Accuracy = 0.91 (0.01)
+- Kappa = 0.73 (0.03)
+- Confusion matrix (mean; std)
+[[0.93 0.02 0.05]
+ [0.19 0.76 0.04]
+ [0.18 0.01 0.81]]
+[[0.01 0.   0.01]
+ [0.09 0.09 0.04]
+ [0.04 0.01 0.03]]
+- Stages recall
+-- NREM = 0.93 (0.01)
+-- REM = 0.76 (0.09)
+-- Wake = 0.81 (0.03)
+
+SECOND COMBINATION
+
+'XGB__booster': 'dart', 'XGB__normalize_type': 'forest', 'XGB__rate_drop': 0.3, 'XGB__sample_type': 'uniform'
+               precision    recall  f1-score   support
+
+        NREM       0.96      0.90      0.93       599
+         Rem       0.49      0.76      0.60        37
+        Wake       0.69      0.82      0.75       114
+
+    accuracy                           0.88       750
+   macro avg       0.71      0.82      0.76       750
+weighted avg       0.90      0.88      0.89       750
+
+
+Results...
+- Accuracy = 0.87 (0.01)
+- Kappa = 0.66 (0.03)
+- Confusion matrix (mean; std)
+[[0.88 0.04 0.08]
+ [0.14 0.79 0.08]
+ [0.11 0.03 0.86]]
+[[0.01 0.01 0.01]
+ [0.05 0.07 0.05]
+ [0.03 0.02 0.03]]
+- Stages recall
+-- NREM = 0.88 (0.01)
+-- REM = 0.79 (0.07)
+-- Wake = 0.86 (0.03)
+
 THIRD COMBINATION
 {'XGB__alpha': 4, 'XGB__booster': 'gblinear', 'XGB__feature_selector': 'cyclic', 'XGB__lambda': 4, 'XGB__updater': 'coord_descent'}
                precision    recall  f1-score   support
 
-        NREM       0.97      0.91      0.94       599
-         Rem       0.71      0.78      0.74        37
-        Wake       0.68      0.86      0.76       114
+        NREM       0.93      0.56      0.70       599
+         Rem       0.10      0.59      0.17        37
+        Wake       0.31      0.46      0.37       114
 
-    accuracy                           0.90       750
-   macro avg       0.79      0.85      0.81       750
-weighted avg       0.91      0.90      0.90       750
+    accuracy                           0.55       750
+   macro avg       0.45      0.54      0.41       750
+weighted avg       0.79      0.55      0.62       750
 
 
 Results...
-- Accuracy = 0.90 (0.01)
-- Kappa = 0.72 (0.04)
+- Accuracy = 0.59 (0.08)
+- Kappa = 0.20 (0.07)
 - Confusion matrix (mean; std)
-[[0.92 0.02 0.06]
- [0.21 0.74 0.05]
- [0.14 0.01 0.84]]
-[[0.01 0.   0.01]
- [0.05 0.06 0.04]
- [0.03 0.01 0.03]]
+[[0.61 0.21 0.18]
+ [0.24 0.52 0.24]
+ [0.28 0.22 0.51]]
+[[0.13 0.07 0.06]
+ [0.26 0.19 0.11]
+ [0.24 0.09 0.18]]
 - Stages recall
--- NREM = 0.92 (0.01)
--- REM = 0.74 (0.06)
--- Wake = 0.84 (0.03)
+-- NREM = 0.61 (0.13)
+-- REM = 0.52 (0.19)
+-- Wake = 0.51 (0.18)
 
 FOURTH COMBINATION
-  {'XGB__alpha': 2, 'XGB__booster': 'gblinear', 'XGB__feature_selector': 'cyclic', 'XGB__lambda': 0, 'XGB__updater': 'shotgun'}
 
+  {'XGB__alpha': 2, 'XGB__booster': 'gblinear', 'XGB__feature_selector': 'cyclic', 'XGB__lambda': 0, 'XGB__updater': 'shotgun'}
                precision    recall  f1-score   support
 
-        NREM       0.97      0.91      0.94       599
-         Rem       0.71      0.78      0.74        37
-        Wake       0.68      0.86      0.76       114
+        NREM       0.93      0.56      0.70       599
+         Rem       0.11      0.62      0.18        37
+        Wake       0.30      0.46      0.36       114
 
-    accuracy                           0.90       750
-   macro avg       0.79      0.85      0.81       750
-weighted avg       0.91      0.90      0.90       750
+    accuracy                           0.55       750
+   macro avg       0.44      0.55      0.41       750
+weighted avg       0.79      0.55      0.62       750
 
-- Accuracy = 0.90 (0.01)
-- Kappa = 0.72 (0.04)
+
+Results...
+- Accuracy = 0.59 (0.08)
+- Kappa = 0.20 (0.07)
 - Confusion matrix (mean; std)
-[[0.92 0.02 0.06]
- [0.21 0.74 0.05]
- [0.14 0.01 0.84]]
-[[0.01 0.   0.01]
- [0.05 0.06 0.04]
- [0.03 0.01 0.03]]
+[[0.61 0.22 0.18]
+ [0.23 0.52 0.24]
+ [0.28 0.22 0.5 ]]
+[[0.13 0.07 0.06]
+ [0.26 0.19 0.11]
+ [0.24 0.09 0.18]]
 - Stages recall
--- NREM = 0.92 (0.01)
--- REM = 0.74 (0.06)
--- Wake = 0.84 (0.03)
+-- NREM = 0.61 (0.13)
+-- REM = 0.52 (0.19)
+-- Wake = 0.50 (0.18)
 
 Fifth Combination
 
@@ -241,3 +253,79 @@ Results...
 -- NREM = 0.91 (0.01)
 -- REM = 0.75 (0.07)
 -- Wake = 0.85 (0.03)
+
+LDA
+
+'solver' : 'svd'
+
+Results...
+- Accuracy = 0.49 (0.02)
+- Kappa = 0.17 (0.01)
+- Confusion matrix (mean; std)
+[[0.48 0.34 0.19]
+ [0.14 0.55 0.32]
+ [0.18 0.28 0.55]]
+[[0.03 0.03 0.02]
+ [0.04 0.07 0.04]
+ [0.04 0.04 0.05]]
+- Stages recall
+-- NREM = 0.48 (0.03)
+-- REM = 0.55 (0.07)
+-- Wake = 0.55 (0.05)
+
+RF
+
+'max_depth': 100, 'max_features': 'sqrt', 'n_estimators': 1000
+
+Results...
+- Accuracy = 0.91 (0.01)
+- Kappa = 0.74 (0.02)
+- Confusion matrix (mean; std)
+[[0.93 0.02 0.05]
+ [0.2  0.76 0.04]
+ [0.15 0.01 0.84]]
+[[0.01 0.   0.01]
+ [0.05 0.07 0.03]
+ [0.03 0.01 0.03]]
+- Stages recall
+-- NREM = 0.93 (0.01)
+-- REM = 0.76 (0.07)
+-- Wake = 0.84 (0.03)
+
+KNN
+
+'metric': 'manhattan', 'n_neighbors': 3, 'weights': 'distance'
+
+Results...
+- Accuracy = 0.90 (0.01)
+- Kappa = 0.71 (0.04)
+- Confusion matrix (mean; std)
+[[0.92 0.03 0.06]
+ [0.14 0.82 0.04]
+ [0.16 0.02 0.82]]
+[[0.01 0.01 0.01]
+ [0.05 0.06 0.02]
+ [0.03 0.02 0.03]]
+- Stages recall
+-- NREM = 0.92 (0.01)
+-- REM = 0.82 (0.06)
+-- Wake = 0.82 (0.03)
+
+SVC
+
+'C': 100, 'gamma': 1, 'kernel': 'rbf', 'class_weight': None
+
+Results...
+- Accuracy = 0.85 (0.01)
+- Kappa = 0.62 (0.02)
+- Confusion matrix (mean; std)
+[[0.86 0.07 0.08]
+ [0.16 0.8  0.04]
+ [0.15 0.03 0.83]]
+[[0.01 0.01 0.02]
+ [0.06 0.06 0.02]
+ [0.03 0.01 0.03]]
+- Stages recall
+-- NREM = 0.86 (0.01)
+-- REM = 0.80 (0.06)
+-- Wake = 0.83 (0.03)
