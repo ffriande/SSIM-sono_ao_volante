@@ -172,12 +172,12 @@ decisionTreeParameters = {
 
 
 params = [
-    # LDAParameters1,
+    LDAParameters1,
     RandomForestParameters1,
-    # KNeighboursParameters1,
-    # SVCParameters1,
-    # LightGBMParameters4
-    # XGBoostParameters1, #XGBoostParameters2, XGBoostParameters3, XGBoostParameters4
+    KNeighboursParameters1,
+    SVCParameters1,
+    LightGBMParameters4,
+    XGBoostParameters1,
 ]
 
 best_params_list = [
